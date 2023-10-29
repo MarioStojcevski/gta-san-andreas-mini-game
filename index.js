@@ -71,10 +71,10 @@ const mouse = new Vector2();
 window.addEventListener('resize', onWindowResize);
 
 document.addEventListener('mousemove', onDocumentMouseMove);
-document.addEventListener('pointermove', onDocumentMouseMove);
+document.addEventListener('touchmove', onDocumentMouseMove);
 
 document.addEventListener('mousedown', onMouseDown);
-document.addEventListener('pointerdown', onMouseDown);
+document.addEventListener('touchstart', onMouseDown);
 
 document.addEventListener('mouseup', onMouseUp);
-document.addEventListener('pointerup', onMouseUp);
+document.addEventListener('touchend', onMouseUp);
