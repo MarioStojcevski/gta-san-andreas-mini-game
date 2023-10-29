@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+canvas {
+  z-index: 0;
+  position: fixed !important;
+  top: 0;
+}
+
+#container {
+  position: relative;
+  z-index: 1;
+  padding: 10px 0px 0px 50px;
+}
+
+h1 {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 50px;
+  font-weight: 600;
+  background-image: linear-gradient(to left, #553c9a, #b393d3);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
