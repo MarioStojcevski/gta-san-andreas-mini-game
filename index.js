@@ -68,7 +68,13 @@ const onWindowResize = () => {
 };
 
 const mouse = new Vector2();
-document.addEventListener('mousemove', onDocumentMouseMove, false);
-window.addEventListener('resize', onWindowResize, false);
-document.addEventListener('mousedown', onMouseDown, false);
-document.addEventListener('mouseup', onMouseUp, false);
+window.addEventListener('resize', onWindowResize);
+
+document.addEventListener('mousemove', onDocumentMouseMove);
+document.addEventListener('pointermove', onDocumentMouseMove);
+
+document.addEventListener('mousedown', onMouseDown);
+document.addEventListener('pointerdown', onMouseDown);
+
+document.addEventListener('mouseup', onMouseUp);
+document.addEventListener('pointerup', onMouseUp);

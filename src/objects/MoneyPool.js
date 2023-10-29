@@ -25,7 +25,7 @@ class MoneyPool extends Group {
       }
 
       const x = (Math.random() * 3) - 1.5;
-      const y = Math.random() * 200 + 1;
+      const y = Math.random() * 50 + 1;
       this.money.position.set(x, y, 0.2);
       this.money.castShadow = true;
       this.money.receiveShadow = true;
@@ -54,6 +54,11 @@ class MoneyPool extends Group {
   updateMoney(speed) {
     this.objects.forEach((obj) => {
       obj.object.position.y -= speed;
+
+      if(obj.object.position.y < -10) {
+        obj.object.position.y = 50;
+        obj.object.position.x = (Math.random() * 3) - 1.5;
+      }
     });
   }
 }

@@ -22,7 +22,7 @@ class Game extends Group {
     this.road = new Road();
     this.player = new Player();
     this.moneyPool = new MoneyPool();
-    this.numberOfMoney = 50;
+    this.numberOfMoney = 30;
 
     this.add(this.road);
     this.add(this.player);
@@ -41,6 +41,7 @@ class Game extends Group {
     this.isDown = true;
     if(!this.rollingStarted) {
       this.rollingStarted = true;
+      this.road.updateRoad(this.speed);
       const animate = () => {
         requestAnimationFrame(animate);
         this.moneyPool.updateMoney(this.speed);
@@ -69,12 +70,10 @@ class Game extends Group {
     for (let i = 0; i < moneyBoundingBoxes.length; i++) {
       const moneyBoundingBox = moneyBoundingBoxes[i];
       const object = this.moneyPool.objects[i];
-      if(playerBoundingBox.intersectsBox(moneyBoundingBox) && !object.isBad) {
-        score.innerHTML = parseInt(score.innerHTML) + 1;
-        object.object.position.y += 100;
-      } else if(playerBoundingBox.intersectsBox(moneyBoundingBox) && object.isBad) {
-        score.innerHTML = parseInt(score.innerHTML) - 1;
-        object.object.position.y += 100;
+      if(playerBoundingBox.intersectsBox(moneyBoundingBox)) {
+        score.innerHTML = parseInt(score.innerHTML) + (object.isBad ? -1 : 1);
+        object.object.position.y += 30;
+        object.object.position.x = (Math.random() * 3) - 1.5;
       }
     }
     
