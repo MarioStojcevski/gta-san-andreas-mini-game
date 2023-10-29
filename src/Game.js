@@ -33,7 +33,7 @@ class Game extends Group {
 
   onMove(x, isMobile) {
     if(this.isDown) {
-      this.player.position.x = !isMobile ? x * 2 : x * 2;
+      this.player.position.x = !isMobile ? x * 2 : x;
     }
   }
 

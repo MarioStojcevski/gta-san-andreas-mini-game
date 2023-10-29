@@ -46,6 +46,7 @@ const animate = () => {
 initializeGame();
 animate();
 
+const mouse = new Vector2();
 const onDocumentMouseMove = (event) => {
   event.preventDefault();
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -74,7 +75,6 @@ const onWindowResize = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
-const mouse = new Vector2();
 window.addEventListener('resize', onWindowResize);
 
 document.addEventListener('mousemove', onDocumentMouseMove);
