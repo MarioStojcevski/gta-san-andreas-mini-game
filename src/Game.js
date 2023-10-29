@@ -31,9 +31,9 @@ class Game extends Group {
     this.generateMoney();
   }
 
-  onMove(x, y) {
+  onMove(x, isMobile) {
     if(this.isDown) {
-      this.player.position.x = x * 2;
+      this.player.position.x = !isMobile ? x * 2 : x * 2;
     }
   }
 
