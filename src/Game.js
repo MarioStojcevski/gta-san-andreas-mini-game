@@ -1,4 +1,4 @@
-import { Group, Box3 } from 'three';
+import { Group, Box3, BoxGeometry, MeshPhongMaterial, Mesh } from 'three';
 
 import Road from './environment/Road.js';
 import Player from './objects/Player.js';
@@ -14,6 +14,7 @@ class Game extends Group {
   rollingStarted;
   speed;
   moneyPool;
+  particles;
   
   constructor() {
     super();
@@ -23,6 +24,7 @@ class Game extends Group {
     this.player = new Player();
     this.moneyPool = new MoneyPool();
     this.numberOfMoney = 30;
+    this.particles = [];
 
     this.add(this.road);
     this.add(this.player);
@@ -88,6 +90,36 @@ class Game extends Group {
     }
   }
 
+  addParticles(color) {
+    const particleGeometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const particleMaterial = new MeshPhongMaterial({
+      color,
+    });
+
+    for (let i = 0; i < 10; i++) {
+      const particle = new Mesh(particleGeometry, particleMaterial);
+      particle.position.set(this.player.position.x, -1, this.player.position.z);
+      particle.castShadow = true;
+      this.particles.push(particle);
+      this.add(particle);
+    }
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      this.particles.forEach((particle) => {
+        particle.position.y += 0.1;
+        particle.position.x += (Math.random() * 0.1) - 0.05;
+        particle.position.z += (Math.random() * 0.1) - 0.05;
+        particle.rotation.x += 0.1;
+        particle.rotation.y += 0.1;
+        particle.rotation.z += 0.1;
+        particle.material.opacity -= 0.01;
+      });
+    };
+
+    animate();
+  }
+
   detectCollision() {
     const playerBoundingBox = new Box3().setFromObject(this.player);
     const moneyBoundingBoxes = this.moneyPool.objects.map((obj) => {
@@ -100,6 +132,8 @@ class Game extends Group {
         score.innerHTML = parseInt(score.innerHTML) + (object.isBad ? -1 : 1);
         object.object.position.y += 30;
         object.object.position.x = (Math.random() * 3) - 1.5;
+
+        this.addParticles(object.isBad ? 0xff0000 : 0x00ff00);
 
         const tint = setInterval(() => {
           if(object.isBad) {

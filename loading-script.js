@@ -33,7 +33,7 @@ const startGame = () => {
     audioLoader.load("assets/sounds/ghetto.mp3", (buffer) => {
       sound.setBuffer(buffer);
       sound.setLoop(true);
-      sound.setVolume(0.5);
+      sound.setVolume(0.15);
       sound.play();
     });
   }, 15000);
