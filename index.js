@@ -53,6 +53,13 @@ const onDocumentMouseMove = (event) => {
   game.onMove(mouse.x, mouse.y);
 };
 
+const onDocumentTouchMove = (event) => {
+  event.preventDefault();
+  mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+  game.onMove(mouse.x, mouse.y);
+}
+
 const onMouseDown = () => {
   game.onDown(mouse.x, mouse.y);
 };
@@ -71,10 +78,10 @@ const mouse = new Vector2();
 window.addEventListener('resize', onWindowResize);
 
 document.addEventListener('mousemove', onDocumentMouseMove);
-document.addEventListener('touchmove', onDocumentMouseMove);
+document.addEventListener('touchmove', onDocumentTouchMove);
 
 document.addEventListener('mousedown', onMouseDown);
-document.addEventListener('touchstart', onMouseDown);
+document.addEventListener('touchstart', onMouseDown, { passive: false });
 
 document.addEventListener('mouseup', onMouseUp);
 document.addEventListener('touchend', onMouseUp);
