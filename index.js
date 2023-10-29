@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight, Fog, Vector2 } from 'three';
+import { Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight, Fog, Vector2, AudioListener, AudioLoader, Audio } from 'three';
 
 import Game from './src/Game.js';
 
@@ -10,7 +10,12 @@ const directionalLight = new DirectionalLight(0xffffff);
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.shadowMap.enabled = true;
 directionalLight.castShadow = true;
-directionalLight.position.set(2, -5, 3);
+directionalLight.position.set(2, -3, 3);
+
+const listener = new AudioListener();
+camera.add(listener);
+export const sound = new Audio(listener);
+export const audioLoader = new AudioLoader();
 
 const game = new Game(scene);
 

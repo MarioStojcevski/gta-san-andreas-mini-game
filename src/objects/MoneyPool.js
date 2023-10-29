@@ -24,27 +24,13 @@ class MoneyPool extends Group {
       if(!isBad) {
         this.money.scale.set(3, 3, 3);
       } else {
-        this.money.scale.set(0.1, 0.1, 0.1);
+        this.money.scale.set(1, 1, 1);
         this.money.rotation.x = Math.PI / 2;
       }
 
       const x = (Math.random() * 3) - 1.5;
       const y = Math.random() * 50 + 1;
       this.money.position.set(x, y, 0.2);
-
-      if(isBad) {
-        this.money.traverse((child) => {
-          if(child.isMesh) {
-            child.material.color.setHex(0xff0000);
-          }
-        });
-      } else {
-        this.money.traverse((child) => {
-          if(child.isMesh) {
-            child.material.color.setHex(0x00ff00);
-          }
-        });
-      }
 
       this.add(this.money);
       this.objects.push({

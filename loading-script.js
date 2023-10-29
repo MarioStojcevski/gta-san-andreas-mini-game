@@ -1,18 +1,41 @@
-import { animate } from "./index.js";
+import { animate, audioLoader, sound } from "./index.js";
 
 const loadingBar = document.querySelector("#loading-bar");
 const loadingBarFill = document.querySelector("#loading-bar-fill");
 const loadingText = document.querySelector("#loading-text");
-const loadingImg = document.querySelector("#loading-img");
+const loadingImg = document.querySelector(".loading-img");
+const container = document.querySelector("#container");
+const timeLeft = document.querySelector('#timeLeft');
+
+const gameCanvas = document.querySelector("canvas");
+const playAgain = document.querySelector("#play-again");
 
 const startGame = () => {
   animate();
+  container.style.display = "block";
+
+  const timer = setInterval(() => {
+    let time = parseInt(timeLeft.textContent);
+
+    if (time === 0) {
+      clearInterval(timer);
+      gameCanvas.style.display = "none";
+      container.style.display = "none";
+      playAgain.style.display = "flex";
+      playAgain.style.zIndex = "1";
+    }
+
+    time--;
+    timeLeft.innerHTML = time;
+  }, 1000);
 
   setInterval(() => {
-    const alertMessage = document.createElement("div");
-    alertMessage.classList.add("alert-message");
-    alertMessage.innerHTML = `<div class="alert-message-text">Play the full game on <a href="https://www.kongregate.com/games/AnastasiaKolendo/escape-from-the-forest" target="_blank">Kongregate</a>!</div>`;
-    document.body.appendChild(alertMessage);
+    audioLoader.load("assets/sounds/ghetto.mp3", (buffer) => {
+      sound.setBuffer(buffer);
+      sound.setLoop(true);
+      sound.setVolume(0.5);
+      sound.play();
+    });
   }, 15000);
 };
 

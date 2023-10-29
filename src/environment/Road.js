@@ -1,4 +1,4 @@
-import { Group, Mesh, PlaneGeometry, MeshBasicMaterial, TextureLoader, RepeatWrapping, BoxGeometry, MeshPhongMaterial } from 'three';
+import { Group, Mesh, PlaneGeometry, TextureLoader, RepeatWrapping, BoxGeometry, MeshPhongMaterial } from 'three';
 
 import Water from './Water.js';
 import Clouds from './Clouds.js';
@@ -38,7 +38,7 @@ class Road extends Group {
     for(let i=2; i<4; i+=2) {
       const road = new Mesh(
         new PlaneGeometry(4, i*100, 1), 
-        new MeshBasicMaterial({ map: texture })
+        new MeshPhongMaterial({ map: texture })
       )
 
       road.receiveShadow = true;
