@@ -1,4 +1,4 @@
-import { Group, Mesh, PlaneGeometry, MeshBasicMaterial, TextureLoader, RepeatWrapping } from 'three';
+import { Group, Mesh, PlaneGeometry, MeshBasicMaterial, TextureLoader, RepeatWrapping, BoxGeometry, MeshPhongMaterial } from 'three';
 
 import Water from './Water.js';
 import Clouds from './Clouds.js';
@@ -18,6 +18,22 @@ class Road extends Group {
     const repeatY = 20;
     texture.repeat.set(repeatX, repeatY);
     this.roads = [];
+
+    // Create curb
+    const leftCurb = new Mesh(
+      new BoxGeometry(0.4, 40, 0.4), 
+      new MeshPhongMaterial({ color: 0x696969 })
+    );
+
+    const rightCurb = new Mesh(
+      new BoxGeometry(0.4, 40, 0.4), 
+      new MeshPhongMaterial({ color: 0x696969 })
+    );
+
+    leftCurb.position.x = -2;
+    rightCurb.position.x = 2;
+    this.add(leftCurb);
+    this.add(rightCurb);
     
     for(let i=2; i<4; i+=2) {
       const road = new Mesh(
@@ -25,7 +41,6 @@ class Road extends Group {
         new MeshBasicMaterial({ map: texture })
       )
 
-      road.castShadow = true;
       road.receiveShadow = true;
       this.add(road);
       this.roads.push(road);

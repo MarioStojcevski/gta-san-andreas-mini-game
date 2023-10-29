@@ -46,6 +46,32 @@ class Game extends Group {
         requestAnimationFrame(animate);
         this.moneyPool.updateMoney(this.speed);
         this.detectCollision();
+
+        // Rotate the player
+        const playerPosition = this.player.position.x;
+        const roadPosition = this.road.position.x;
+        const difference = playerPosition - roadPosition;
+        const rotation = difference * 0.5;
+        this.player.rotation.z = rotation;
+
+        // Out of bounds
+        if (playerPosition < -0.85 || playerPosition > 0.85) {
+          this.player.position.y -= 0.1;
+          this.player.position.z -= 0.05;
+        }
+
+        // Flash the player if out of bounds
+        if (this.player.position.y < -4) {
+          this.player.position.set(0, 0, 0.2);
+          const flash = setInterval(() => {
+            this.player.visible = !this.player.visible;
+          }, 100);
+          setTimeout(() => {
+            clearInterval(flash);
+            this.player.visible = true;
+          }, 1000);
+        }
+
       }
 
       animate();
@@ -74,6 +100,31 @@ class Game extends Group {
         score.innerHTML = parseInt(score.innerHTML) + (object.isBad ? -1 : 1);
         object.object.position.y += 30;
         object.object.position.x = (Math.random() * 3) - 1.5;
+
+        const tint = setInterval(() => {
+          if(object.isBad) {
+            this.player.traverse((child) => {
+              if(child.isMesh) {
+                child.material.color.setHex(0xff0000);
+              }
+            });
+          } else {
+            this.player.traverse((child) => {
+              if(child.isMesh) {
+                child.material.color.setHex(0x00ff00);
+              }
+            });
+          }
+        }, 100);
+
+        setTimeout(() => {
+          clearInterval(tint);
+          this.player.traverse((child) => {
+            if(child.isMesh) {
+              child.material.color.setHex(0xffffff);
+            }
+          });
+        }, 500);
       }
     }
     

@@ -5,17 +5,17 @@ import Game from './src/Game.js';
 const scene = new Scene();
 const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
+const directionalLight = new DirectionalLight(0xffffff);
 
+renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.shadowMap.enabled = true;
+directionalLight.castShadow = true;
+directionalLight.position.set(2, -5, 3);
 
 const game = new Game(scene);
 
 const initializeGame = () => {
-  document.body.appendChild( renderer.domElement );
-  const directionalLight = new DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(0, -5, 3);
-  directionalLight.castShadow = true;
+  document.body.appendChild(renderer.domElement);
   scene.add(directionalLight);
   scene.fog = new Fog(0xffffff, 10, 30);
   camera.position.z = 5;
@@ -37,14 +37,13 @@ const rotateTheCamera = () => {
 
 };
 
-const animate = () => {
+export const animate = () => {
   requestAnimationFrame(animate);
   rotateTheCamera();
   renderer.render(scene, camera);
 }
 
 initializeGame();
-animate();
 
 const mouse = new Vector2();
 const onDocumentMouseMove = (event) => {
@@ -62,7 +61,7 @@ const onDocumentTouchMove = (event) => {
 }
 
 const onMouseDown = () => {
-  game.onDown(mouse.x, mouse.y);
+  game.onDown();
 };
 
 const onMouseUp = () => {

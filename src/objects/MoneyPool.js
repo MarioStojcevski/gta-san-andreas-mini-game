@@ -12,10 +12,14 @@ class MoneyPool extends Group {
 
   addMoney() {
     const loader = new GLTFLoader();
-
     const isBad = Math.random() < 0.5;
 
     loader.load(!isBad ? './assets/models/money.glb': './assets/models/bomb.glb', (gltf) => {
+      gltf.scene.traverse((child) => {
+        if(child.isMesh) {
+          child.castShadow = true;
+        }
+      });
       this.money = gltf.scene;
       if(!isBad) {
         this.money.scale.set(3, 3, 3);
@@ -27,8 +31,20 @@ class MoneyPool extends Group {
       const x = (Math.random() * 3) - 1.5;
       const y = Math.random() * 50 + 1;
       this.money.position.set(x, y, 0.2);
-      this.money.castShadow = true;
-      this.money.receiveShadow = true;
+
+      if(isBad) {
+        this.money.traverse((child) => {
+          if(child.isMesh) {
+            child.material.color.setHex(0xff0000);
+          }
+        });
+      } else {
+        this.money.traverse((child) => {
+          if(child.isMesh) {
+            child.material.color.setHex(0x00ff00);
+          }
+        });
+      }
 
       this.add(this.money);
       this.objects.push({

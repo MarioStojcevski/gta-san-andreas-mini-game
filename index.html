@@ -10,7 +10,18 @@
     }
   </script>
   <script src="./index.js" type="module"></script>
+  <script src="./loading-script.js" type="module"></script>
   <body>
+    <div id="loading-screen">
+      <div>
+        <img id="loading-img" src="https://i.pinimg.com/564x/ec/e7/94/ece794a165336aaf4a654ca254bb3ea8.jpg" />
+        <h1 id="loading-text">LOADING..</h1>
+      </div>
+      <div id="loading-bar">
+        <div id="loading-bar-fill"></div>
+      </div>
+    </div>
+
     <div id="container">
       <h1>
         Score:<span id="scoreAmount">0</span>

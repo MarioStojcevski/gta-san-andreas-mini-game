@@ -11,14 +11,16 @@ class Player extends Group {
     const loader = new GLTFLoader();
 
     loader.load('./assets/models/car.glb', (gltf) => {
+      gltf.scene.traverse((child) => {
+        if(child.isMesh) {
+          child.castShadow = true;
+        }
+      });
       this.player = gltf.scene;
       this.player.scale.set(0.2, 0.2, 0.2);
       this.player.position.set(0, -2, 0.2);
       this.player.rotateX(Math.PI/2);
-
       this.player.castShadow = true;
-      this.player.receiveShadow = true;
-
       this.add(this.player);
     });
   }
