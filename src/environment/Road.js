@@ -5,35 +5,32 @@ import Clouds from './Clouds.js';
 
 class Road extends Group {
   static roads;
+  static leftCurb;
+  static rightCurb;
 
   constructor() {
     super();
 
+    this.roads = [];
+    this.water = new Water();
+    this.clouds = new Clouds();
+
+    this.defineCurbs();
+
+    this.defineRoads();
+
+    this.add(this.water);
+    this.add(this.clouds);
+  }
+
+  defineRoads() {
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load('./assets/textures/road.jpeg');
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;
-
     const repeatX = 1;
     const repeatY = 20;
     texture.repeat.set(repeatX, repeatY);
-    this.roads = [];
-
-    // Create curb
-    const leftCurb = new Mesh(
-      new BoxGeometry(0.4, 40, 0.4), 
-      new MeshPhongMaterial({ color: 0x696969 })
-    );
-
-    const rightCurb = new Mesh(
-      new BoxGeometry(0.4, 40, 0.4), 
-      new MeshPhongMaterial({ color: 0x696969 })
-    );
-
-    leftCurb.position.x = -2;
-    rightCurb.position.x = 2;
-    this.add(leftCurb);
-    this.add(rightCurb);
     
     for(let i=2; i<4; i+=2) {
       const road = new Mesh(
@@ -45,17 +42,36 @@ class Road extends Group {
       this.add(road);
       this.roads.push(road);
     };
+  }
 
-    this.water = new Water();
-    this.clouds = new Clouds();
+  defineCurbs() {
+    const curbProperties = {
+      width: 0.4,
+      height: 40,
+      depth: 0.4,
+      color: 0x696969,
+    }
 
-    this.add(this.water);
-    this.add(this.clouds);
+    this.leftCurb = new Mesh(
+      new BoxGeometry(curbProperties.width, curbProperties.height, curbProperties.depth), 
+      new MeshPhongMaterial({ color: curbProperties.color })
+    );
+
+    this.rightCurb = new Mesh(
+      new BoxGeometry(curbProperties.width, curbProperties.height, curbProperties.depth), 
+      new MeshPhongMaterial({ color: curbProperties.color})
+    );
+
+    this.leftCurb.position.x = -2;
+    this.rightCurb.position.x = 2;
+    this.add(this.leftCurb);
+    this.add(this.rightCurb);
   }
 
   updateRoad(speed) {
     const animate = () => {
       requestAnimationFrame(animate);
+      this.water.updateWater(speed);
       this.roads.forEach((road) => {
         road.position.y -= speed;
         if(road.position.y < -30) {
