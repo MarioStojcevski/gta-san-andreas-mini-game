@@ -29,14 +29,12 @@ const startGame = () => {
     timeLeft.innerHTML = time;
   }, 1000);
 
-  setInterval(() => {
-    audioLoader.load("assets/sounds/ghetto.mp3", (buffer) => {
-      sound.setBuffer(buffer);
-      sound.setLoop(true);
-      sound.setVolume(0.15);
-      sound.play();
-    });
-  }, 15000);
+  audioLoader.load("assets/sounds/ghetto.mp3", (buffer) => {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(0.15);
+    sound.play();
+  });
 };
 
 const loadGame = () => {

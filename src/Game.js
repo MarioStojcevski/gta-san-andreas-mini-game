@@ -1,41 +1,49 @@
-import { Group, Box3, BoxGeometry, MeshPhongMaterial, Mesh } from 'three';
+import { Group, Box3, BoxGeometry, MeshPhongMaterial, Mesh, SphereGeometry } from 'three';
 
 import Road from './environment/Road.js';
 import Player from './objects/Player.js';
-import MoneyPool from './objects/MoneyPool.js';
+import Water from './environment/Water.js';
+import Clouds from './environment/Clouds.js';
+import Collectables from './objects/Collectables.js';
 
 const score = document.querySelector('#scoreAmount');
 
 class Game extends Group {
   static road;
+  static water;
+  static clouds;
   static player;
-  numberOfMoney;
-  isDown;
-  rollingStarted;
-  speed;
-  moneyPool;
-  particles;
+  static numberOfMoney;
+  static isDown;
+  static rollingStarted;
+  static speed;
+  static collectables;
+  static particles;
   
   constructor() {
     super();
 
     this.speed = 0.1;
     this.road = new Road();
+    this.water = new Water();
+    this.clouds = new Clouds();
     this.player = new Player();
-    this.moneyPool = new MoneyPool();
-    this.numberOfMoney = 30;
+    this.collectables = new Collectables();
+    this.numberOfCollectables = 30;
     this.particles = [];
 
     this.add(this.road);
+    this.add(this.water);
+    this.add(this.clouds);
     this.add(this.player);
-    this.add(this.moneyPool);
+    this.add(this.collectables);
 
-    this.generateMoney();
+    this.generateCollectables();
   }
 
   onMove(x, isMobile) {
     if(this.isDown) {
-      this.player.position.x = !isMobile ? x * 2 : x;
+      this.player.position.x = !isMobile ? x * 2 : x * 0.5;
     }
   }
 
@@ -44,36 +52,24 @@ class Game extends Group {
     if(!this.rollingStarted) {
       this.rollingStarted = true;
       this.road.updateRoad(this.speed);
+      this.water.updateWater(this.speed);
       const animate = () => {
         requestAnimationFrame(animate);
-        this.moneyPool.updateMoney(this.speed);
+
+        // Update collectables
+        this.collectables.updateCollectables(this.speed);
+
+        // Detect collision between player and collectables
         this.detectCollision();
 
-        // Rotate the player
-        const playerPosition = this.player.position.x;
-        const roadPosition = this.road.position.x;
-        const difference = playerPosition - roadPosition;
-        const rotation = difference * 0.5;
-        this.player.rotation.z = rotation;
-
-        // Out of bounds
-        if (playerPosition < -0.85 || playerPosition > 0.85) {
-          this.player.position.y -= 0.1;
-          this.player.position.z -= 0.05;
-        }
+        // Restrict player movement to the road
+        this.playerMovementRestriction();
 
         // Flash the player if out of bounds
-        if (this.player.position.y < -4) {
-          this.player.position.set(0, 0, 0.2);
-          const flash = setInterval(() => {
-            this.player.visible = !this.player.visible;
-          }, 100);
-          setTimeout(() => {
-            clearInterval(flash);
-            this.player.visible = true;
-          }, 1000);
-        }
+        this.flashPlayerIfOutOfBounds();
 
+        // Check if some particles are out of bounds and remove them
+        this.removeParticlesIfOutOfBounds();
       }
 
       animate();
@@ -84,14 +80,27 @@ class Game extends Group {
     this.isDown = false;
   }
 
-  generateMoney() {
-    for (let i = 0; i < this.numberOfMoney; i++) {
-      this.moneyPool.addMoney();
+  playerMovementRestriction() {
+    const playerPosition = this.player.position.x;
+    const roadPosition = this.road.position.x;
+    const difference = playerPosition - roadPosition;
+    const rotation = difference * 0.5;
+    this.player.rotation.z = rotation;
+
+    if (playerPosition < -0.85 || playerPosition > 0.85) {
+      this.player.position.y -= 0.1;
+      this.player.position.z -= 0.05;
+    }
+  }
+
+  generateCollectables() {
+    for (let i = 0; i < this.numberOfCollectables; i++) {
+      this.collectables.addCollectable();
     }
   }
 
   addParticles(color) {
-    const particleGeometry = new BoxGeometry(0.1, 0.1, 0.1);
+    const particleGeometry = new SphereGeometry(0.1, 0.1, 0.1);
     const particleMaterial = new MeshPhongMaterial({
       color,
     });
@@ -120,18 +129,27 @@ class Game extends Group {
     animate();
   }
 
+  removeParticlesIfOutOfBounds() {
+    this.particles.forEach((particle) => {
+      if(particle.position.y > 40) {
+        this.remove(particle);
+        this.particles.splice(this.particles.indexOf(particle), 1);
+      }
+    });
+  }
+
   detectCollision() {
     const playerBoundingBox = new Box3().setFromObject(this.player);
-    const moneyBoundingBoxes = this.moneyPool.objects.map((obj) => {
-      return new Box3().setFromObject(obj.object);
+    const collectablesBoundingBoxes = this.collectables.objects.map((obj) => {
+      return new Box3().setFromObject(obj.collectable);
     });
-    for (let i = 0; i < moneyBoundingBoxes.length; i++) {
-      const moneyBoundingBox = moneyBoundingBoxes[i];
-      const object = this.moneyPool.objects[i];
-      if(playerBoundingBox.intersectsBox(moneyBoundingBox)) {
+    for (let i = 0; i < collectablesBoundingBoxes.length; i++) {
+      const collectableBoundingBox = collectablesBoundingBoxes[i];
+      const object = this.collectables.objects[i];
+      if(playerBoundingBox.intersectsBox(collectableBoundingBox)) {
         score.innerHTML = parseInt(score.innerHTML) + (object.isBad ? -1 : 1);
-        object.object.position.y += 30;
-        object.object.position.x = (Math.random() * 3) - 1.5;
+        object.collectable.position.y += 30;
+        object.collectable.position.x = (Math.random() * 3) - 1.5;
 
         this.addParticles(object.isBad ? 0xff0000 : 0x00ff00);
 
@@ -160,8 +178,20 @@ class Game extends Group {
           });
         }, 500);
       }
+    } 
+  }
+
+  flashPlayerIfOutOfBounds() {
+    if (this.player.position.y < -4) {
+      this.player.position.set(0, 0, 0.2);
+      const flash = setInterval(() => {
+        this.player.visible = !this.player.visible;
+      }, 100);
+      setTimeout(() => {
+        clearInterval(flash);
+        this.player.visible = true;
+      }, 1000);
     }
-    
   }
 }
 

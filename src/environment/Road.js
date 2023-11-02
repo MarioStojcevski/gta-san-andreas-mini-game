@@ -1,8 +1,5 @@
 import { Group, Mesh, PlaneGeometry, TextureLoader, RepeatWrapping, BoxGeometry, MeshPhongMaterial } from 'three';
 
-import Water from './Water.js';
-import Clouds from './Clouds.js';
-
 class Road extends Group {
   static roads;
   static leftCurb;
@@ -12,15 +9,10 @@ class Road extends Group {
     super();
 
     this.roads = [];
-    this.water = new Water();
-    this.clouds = new Clouds();
 
     this.defineCurbs();
 
     this.defineRoads();
-
-    this.add(this.water);
-    this.add(this.clouds);
   }
 
   defineRoads() {
@@ -71,7 +63,6 @@ class Road extends Group {
   updateRoad(speed) {
     const animate = () => {
       requestAnimationFrame(animate);
-      this.water.updateWater(speed);
       this.roads.forEach((road) => {
         road.position.y -= speed;
         if(road.position.y < -30) {

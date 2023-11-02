@@ -36,7 +36,7 @@ class Water extends Group {
   updateWater(speed) {
     const animate = () => {
       requestAnimationFrame(animate);
-      this.water.position.y -= speed * 0.0005;
+      this.water.position.y -= speed;
         if(this.water.position.y < -30) {
           this.water.position.y = 80;
         }
