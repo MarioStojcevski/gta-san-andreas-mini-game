@@ -1,4 +1,4 @@
-import { Group, Box3, BoxGeometry, MeshPhongMaterial, Mesh, SphereGeometry } from 'three';
+import { Group, Box3, MeshPhongMaterial, Mesh, SphereGeometry } from 'three';
 
 import Road from './environment/Road.js';
 import Player from './objects/Player.js';
@@ -97,6 +97,7 @@ class Game extends Group {
     for (let i = 0; i < this.numberOfCollectables; i++) {
       this.collectables.addCollectable();
     }
+
   }
 
   addParticles(color) {

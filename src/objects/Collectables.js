@@ -35,6 +35,7 @@ class Collectables extends Group {
       collectable.position.set(collectableProperties.x, collectableProperties.y, collectableProperties.z);
 
       this.add(collectable);
+
       this.spinCollectable(collectable);
 
       this.objects.push({
@@ -46,7 +47,8 @@ class Collectables extends Group {
 
   spinCollectable(collectable) {
     const animate = () => {
-      collectable.rotateZ(0.0003);
+      requestAnimationFrame(animate);
+      collectable.rotation.z += 0.01;
     }
 
     animate();
