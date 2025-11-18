@@ -19,7 +19,7 @@ class Game extends Group {
   static speed;
   static collectables;
   static particles;
-  
+
   constructor() {
     super();
 
@@ -42,14 +42,14 @@ class Game extends Group {
   }
 
   onMove(x, isMobile) {
-    if(this.isDown) {
+    if (this.isDown) {
       this.player.position.x = !isMobile ? x * 2 : x * 0.5;
     }
   }
 
   onDown() {
     this.isDown = true;
-    if(!this.rollingStarted) {
+    if (!this.rollingStarted) {
       this.rollingStarted = true;
       this.road.updateRoad(this.speed);
       this.water.updateWater(this.speed);
@@ -87,9 +87,10 @@ class Game extends Group {
     const rotation = difference * 0.5;
     this.player.rotation.z = rotation;
 
-    if (playerPosition < -0.85 || playerPosition > 0.85) {
+    if (playerPosition < -0.9 || playerPosition > 0.9) {
       this.player.position.y -= 0.1;
       this.player.position.z -= 0.05;
+      this.isDown && this.onUp()
     }
   }
 
@@ -132,7 +133,7 @@ class Game extends Group {
 
   removeParticlesIfOutOfBounds() {
     this.particles.forEach((particle) => {
-      if(particle.position.y > 40) {
+      if (particle.position.y > 40) {
         this.remove(particle);
         this.particles.splice(this.particles.indexOf(particle), 1);
       }
@@ -147,7 +148,7 @@ class Game extends Group {
     for (let i = 0; i < collectablesBoundingBoxes.length; i++) {
       const collectableBoundingBox = collectablesBoundingBoxes[i];
       const object = this.collectables.objects[i];
-      if(playerBoundingBox.intersectsBox(collectableBoundingBox)) {
+      if (playerBoundingBox.intersectsBox(collectableBoundingBox)) {
         score.innerHTML = parseInt(score.innerHTML) + (object.isBad ? -1 : 1);
         object.collectable.position.y += 30;
         object.collectable.position.x = (Math.random() * 3) - 1.5;
@@ -155,15 +156,15 @@ class Game extends Group {
         this.addParticles(object.isBad ? 0xff0000 : 0x00ff00);
 
         const tint = setInterval(() => {
-          if(object.isBad) {
+          if (object.isBad) {
             this.player.traverse((child) => {
-              if(child.isMesh) {
+              if (child.isMesh) {
                 child.material.color.setHex(0xff0000);
               }
             });
           } else {
             this.player.traverse((child) => {
-              if(child.isMesh) {
+              if (child.isMesh) {
                 child.material.color.setHex(0x00ff00);
               }
             });
@@ -173,26 +174,29 @@ class Game extends Group {
         setTimeout(() => {
           clearInterval(tint);
           this.player.traverse((child) => {
-            if(child.isMesh) {
+            if (child.isMesh) {
               child.material.color.setHex(0xffffff);
             }
           });
         }, 500);
       }
-    } 
+    }
   }
 
-  flashPlayerIfOutOfBounds() {
-    if (this.player.position.y < -4) {
-      this.player.position.set(0, 0, 0.2);
-      const flash = setInterval(() => {
-        this.player.visible = !this.player.visible;
-      }, 100);
-      setTimeout(() => {
-        clearInterval(flash);
-        this.player.visible = true;
-      }, 1000);
+  flashPlayerIfOutOfBounds() {    
+    if (this.player.position.y > -1) {
+      return;
     }
+    
+    this.isDown && this.onUp()
+    this.player.position.set(0, 0, 0);
+    const flash = setInterval(() => {
+      this.player.visible = !this.player.visible;
+    }, 100);
+    setTimeout(() => {
+      clearInterval(flash);
+      this.player.visible = true;
+    }, 1000);
   }
 }
 
